@@ -5,11 +5,15 @@ spring:
       path: /h2-console
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:~/jwt
+    url: jdbc:h2:mem:testdb
     username: sa
 #    password:
-
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create
 
 jwt:
   secretKey: 462773fa9b749bd5481fa2578401a451985c4058cdf49c0a8feeb623397f228fdd4e2a2d75c86ddfd1b31803f308b1710d9cceb97a920beeb413e02e08a53c9c
-  token-validity-in-seconds: 360000
+  access-token-expiration-seconds: 1800000
