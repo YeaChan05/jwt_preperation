@@ -1,4 +1,4 @@
-package org.yechan.home.account;
+package org.yechan.jwt.account;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
