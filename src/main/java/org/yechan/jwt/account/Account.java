@@ -1,5 +1,6 @@
 package org.yechan.jwt.account;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
@@ -33,6 +34,10 @@ public class Account implements UserDetails {
     private LocalDateTime createdDateTime;
 
     private LocalDateTime modifiedDateTime;
+
+    @JsonIgnore
+    @Column(name = "activated")
+    private boolean activated;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
