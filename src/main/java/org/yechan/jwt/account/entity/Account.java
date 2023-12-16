@@ -1,4 +1,4 @@
-package org.yechan.jwt.account;
+package org.yechan.jwt.account.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -30,9 +30,9 @@ public class Account implements UserDetails {
     private String password;
 
     private String phone;
-
+    
     private LocalDateTime createdDateTime;
-
+    
     private LocalDateTime modifiedDateTime;
 
     @JsonIgnore
@@ -43,7 +43,7 @@ public class Account implements UserDetails {
     @JoinTable(
             name = "account_authority",
             joinColumns = {@JoinColumn(name = "account_id", referencedColumnName = "account_id")},
-            inverseJoinColumns = {@JoinColumn(name = "authority_id", referencedColumnName = "authority_id")})
+            inverseJoinColumns = {@JoinColumn(name = "authority_id", referencedColumnName = "role_type")})
     private Set<Authority> authorities;
 
     @Override
