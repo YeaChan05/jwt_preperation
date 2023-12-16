@@ -1,5 +1,6 @@
 package org.yechan.jwt.account;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -8,12 +9,14 @@ import org.yechan.jwt.token.TokenProvider;
 
 @Slf4j
 @RestController
-@RequestMapping("/account")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
-    private final TokenProvider tokenProvider;
-
+    private final AuthService authService;
+    
     @PostMapping("/login")
-    public ResponseEntity<ChannelCandidateResponse> login(@Valid @RequestBody FormBody formBody) {
+    public ResponseEntity<TokenInfo> login(@Valid @RequestBody FormBody formBody) {
+        TokenInfo tokenInfo=authService.login(formBody);
+        return ResponseEntity.ok(tokenInfo);
     }
 }

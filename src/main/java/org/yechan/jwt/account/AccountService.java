@@ -4,9 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.yechan.jwt.account.entity.Account;
+import org.yechan.jwt.account.entity.Authority;
 
 import java.util.Collections;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,7 +21,7 @@ public class AccountService {
         }
 
         Authority authority = Authority.builder()
-                .authorityId(RoleType.USER)
+                .roleType(RoleType.USER)
                 .build();
 
         // 유저 정보를 만들어서 save
@@ -33,5 +34,4 @@ public class AccountService {
 
         return accountRepository.save(account);
     }
-
 }
