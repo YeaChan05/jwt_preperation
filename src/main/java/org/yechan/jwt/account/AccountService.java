@@ -28,6 +28,9 @@ public class AccountService {
         Account account=Account.builder()
                 .username(accountDto.getUsername())
                 .password(passwordEncoder.encode(accountDto.getPassword()))
+                .phone(accountDto.getPhone())
+                .createdDateTime(accountDto.getCreatedDateTime())
+                .modifiedDateTime(accountDto.getModifiedDateTime())
                 .authorities(Collections.singleton(authority))
                 .activated(true)
                 .build();
