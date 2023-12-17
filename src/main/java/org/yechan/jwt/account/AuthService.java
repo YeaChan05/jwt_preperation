@@ -16,7 +16,7 @@ import java.util.Collection;
 public class AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenProvider tokenProvider;
-    public GivenToken login(LoginBody loginBody) {
+    public TokenInfo login(LoginBody loginBody) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginBody.getUsername(), loginBody.getPassword());
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         AccountDetails principal = (AccountDetails)authentication.getPrincipal();
