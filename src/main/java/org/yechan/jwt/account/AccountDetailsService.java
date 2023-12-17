@@ -6,6 +6,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.yechan.jwt.account.entity.Account;
+import org.yechan.jwt.account.entity.AccountDetails;
 
 import java.util.Optional;
 
@@ -21,6 +23,6 @@ public class AccountDetailsService implements UserDetailsService {
             //TODO: 2023-12-11 오후 5:29 : 계정 발견 실패시 예외처리
             throw new RuntimeException();
         }
-        return account.get();
+        return new AccountDetails(account.get());
     }
 }

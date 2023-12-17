@@ -7,6 +7,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.context.ActiveProfiles;
 import org.yechan.jwt.account.*;
+import org.yechan.jwt.account.entity.Account;
+import org.yechan.jwt.account.entity.AccountDetails;
+import org.yechan.jwt.account.entity.Authority;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -52,22 +55,23 @@ class TokenProviderTest {
 
     @Test
     void testTokenCreate() {
-        String token = tokenProvider.createToken(account.getUsername(), account.getAuthorities());
-        assertThat(tokenProvider.validateToken(token)).isTrue();
+        TokenInfo tokenInfo = tokenProvider.createToken(account.getUsername(), account.getAuthorities());
+        assertThat(tokenProvider.validateToken(tokenInfo.getAccessToken())).isTrue();
+        assertThat(tokenProvider.validateToken(tokenInfo.getRefreshToken())).isTrue();
     }
 
     @Test
     void testGetAuthenticationByToken() {
         accountRepository.save(account);//저장된 account를 가져와야 하기 때문에 저장해야함
-        String token = tokenProvider.createToken(account.getUsername(), account.getAuthorities());
-
-        Authentication authentication = tokenProvider.getAuthentication(token);
+        TokenInfo tokenInfo = tokenProvider.createToken(account.getUsername(), account.getAuthorities());
+        
+        Authentication authentication = tokenProvider.getAuthentication(tokenInfo.getAccessToken());
         assertThat(authentication.getAuthorities().parallelStream()
                 .map(grantedAuthority -> (Authority)grantedAuthority)
                 .map(Authority::getAuthority))
                 .contains("USER","ADMIN");
 
-        Account principal = (Account) authentication.getPrincipal();
+        AccountDetails principal = (AccountDetails) authentication.getPrincipal();
         assertThat(principal.getUsername()).isEqualTo("test");
         assertThat(principal.getPassword()).isEqualTo("qweasd123");//인코딩 안쪽 로직을 통했으므로 테스트가 통과된다.
         accountRepository.deleteAll();
