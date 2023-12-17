@@ -19,8 +19,8 @@ public class TokenBlacklistService {
     private Long refreshTokenExpiry;
     
     public void blacklistToken(String accessToken, String refreshToken) {
-        redisTemplate.opsForValue().set("blacklisted_access_token", accessToken, accessTokenExpiry, TimeUnit.SECONDS);
-        redisTemplate.opsForValue().set("blacklisted_refresh_token", refreshToken, refreshTokenExpiry, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(accessToken, "blacklisted_access_token", accessTokenExpiry, TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(refreshToken, "blacklisted_refresh_token", refreshTokenExpiry, TimeUnit.SECONDS);
     }
     
     public boolean isTokenBlacklisted(String token) {
