@@ -17,11 +17,12 @@ import java.io.IOException;
 public class JwtFilter extends OncePerRequestFilter {
 
 	private final TokenProvider tokenProvider;
+	private final TokenBlacklistService tokenBlacklistService;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 		String token = tokenProvider.resolveToken(request);
-		if (token != null && tokenProvider.validateToken(token)) {
+		if (token != null && tokenProvider.validateToken(token)&&!tokenBlacklistService.isTokenBlacklisted(token)) {
 			Authentication auth = tokenProvider.getAuthentication(token);
 			SecurityContextHolder.getContext().setAuthentication(auth);
 		}
