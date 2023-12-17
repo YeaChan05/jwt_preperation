@@ -1,6 +1,7 @@
 package org.yechan.jwt.account;
 
 import org.junit.jupiter.api.Test;
+import org.yechan.jwt.account.entity.Authority;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
