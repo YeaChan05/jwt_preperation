@@ -27,8 +27,12 @@ public class TokenProvider {
 
     @Value("${jwt.secretKey}")
     private String secretKey;
+    
     @Value("${jwt.access-token-expiration-seconds}")
-    private Long tokenValidTime;
+    private Long accessTokenValidTime;
+    
+    @Value("${jwt.refresh-token-expiration-seconds}")
+    private Long refreshTokenValidTime;
 
     private final AccountDetailsService accountDetailsService;
 
@@ -45,22 +49,21 @@ public class TokenProvider {
         Header<?> header = Jwts.header();
 
         header.put("prefix", TOKEN_PREFIX);
-
-        Date now = new Date();
         
+        long now = (new Date()).getTime();
         String accessToken = Jwts.builder()
                 .setHeader((Map<String, Object>) header)
                 .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + tokenValidTime))
+                .setIssuedAt(new Date(now))
+                .setExpiration(new Date(now + accessTokenValidTime))
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
         
         String refreshToken = Jwts.builder()
                 .setHeader((Map<String, Object>) header)
                 .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + tokenValidTime))
+                .setIssuedAt(new Date(now))
+                .setExpiration(new Date(now + refreshTokenValidTime))
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
         
