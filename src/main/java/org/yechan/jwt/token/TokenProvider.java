@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.yechan.jwt.account.AccountDetailsService;
+import org.yechan.jwt.account.GivenToken;
 
 import java.util.Base64;
 import java.util.Collection;
@@ -37,7 +38,7 @@ public class TokenProvider {
     }
 
 
-    public String createToken(String userPk, Collection<? extends GrantedAuthority> roles) {
+    public GivenToken createToken(String userPk, Collection<? extends GrantedAuthority> roles) {
         Claims claims = Jwts.claims().setSubject(userPk);
         claims.put("roles", roles);
 
@@ -46,13 +47,28 @@ public class TokenProvider {
         header.put("prefix", TOKEN_PREFIX);
 
         Date now = new Date();
-        return Jwts.builder()
+        
+        String accessToken = Jwts.builder()
                 .setHeader((Map<String, Object>) header)
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(new Date(now.getTime() + tokenValidTime))
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
+        
+        String refreshToken = Jwts.builder()
+                .setHeader((Map<String, Object>) header)
+                .setClaims(claims)
+                .setIssuedAt(now)
+                .setExpiration(new Date(now.getTime() + tokenValidTime))
+                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .compact();
+        
+        return GivenToken.builder()
+                .grantType(TOKEN_PREFIX)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 
 
@@ -69,9 +85,9 @@ public class TokenProvider {
                 .getSubject();
     }
 
-    public boolean validateToken(String jwtToken) {
+    public boolean validateToken(String token) {
         try {
-            Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(jwtToken);
+            Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
             return !claims.getBody().getExpiration().before(new Date());
         } catch (Exception e) {
             return false;
