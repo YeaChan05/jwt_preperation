@@ -27,9 +27,6 @@ class TokenProviderTest {
     AccountRepository accountRepository;
 
     @Autowired
-    AuthorityRepository authorityRepository;
-
-    @Autowired
     AccountDetailsService accountDetailsService;
     private Account account;
 

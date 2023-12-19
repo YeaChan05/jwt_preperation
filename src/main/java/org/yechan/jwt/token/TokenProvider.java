@@ -5,7 +5,6 @@ import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,7 +23,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class TokenProvider {
     public static final String AUTHORIZATION_HEADER = "Authorization";
-    public static final String SET_COOKIE_HEADER = "Set-Cookie";
     public static final String TOKEN_PREFIX = "Bearer ";
 
     @Value("${jwt.secretKey}")
@@ -37,8 +35,6 @@ public class TokenProvider {
     private Long refreshTokenValidTime;
 
     private final AccountDetailsService accountDetailsService;
-    
-    private final RedisTemplate<String,String> redisTemplate;
 
     @PostConstruct
     protected void init() {
