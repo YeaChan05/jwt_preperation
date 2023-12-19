@@ -5,6 +5,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -17,13 +18,18 @@ import java.io.IOException;
 public class JwtFilter extends OncePerRequestFilter {
 
 	private final TokenProvider tokenProvider;
-	private final TokenBlacklistService tokenBlacklistService;
-
+	
+	@Override
+	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+		return request.getRequestURI().contains("/refresh");//이땐 이미 access token이 만료되었을 수 있다.
+	}
+	
+	@SneakyThrows
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-		String token = tokenProvider.resolveToken(request);
-		if (token != null && tokenProvider.validateToken(token)&&!tokenBlacklistService.isTokenBlacklisted(token)) {
-			Authentication auth = tokenProvider.getAuthentication(token);
+		String token = tokenProvider.resolveAccessToken(request);
+		if (token != null && tokenProvider.validateToken(token)) {
+            Authentication auth = tokenProvider.getAuthentication(token);
 			SecurityContextHolder.getContext().setAuthentication(auth);
 		}
 		filterChain.doFilter(request, response);
