@@ -55,7 +55,7 @@ class TokenProviderTest {
 
     @Test
     void testTokenCreate() {
-        TokenInfo tokenInfo = tokenProvider.createToken(account.getUsername(), account.getAuthorities());
+        TokenInfo tokenInfo = tokenProvider.createTokens(account.getUsername(), account.getAuthorities());
         assertThat(tokenProvider.validateToken(tokenInfo.getAccessToken())).isTrue();
         assertThat(tokenProvider.validateToken(tokenInfo.getRefreshToken())).isTrue();
     }
@@ -63,7 +63,7 @@ class TokenProviderTest {
     @Test
     void testGetAuthenticationByToken() {
         accountRepository.save(account);//저장된 account를 가져와야 하기 때문에 저장해야함
-        TokenInfo tokenInfo = tokenProvider.createToken(account.getUsername(), account.getAuthorities());
+        TokenInfo tokenInfo = tokenProvider.createTokens(account.getUsername(), account.getAuthorities());
         
         Authentication authentication = tokenProvider.getAuthentication(tokenInfo.getAccessToken());
         assertThat(authentication.getAuthorities().parallelStream()
