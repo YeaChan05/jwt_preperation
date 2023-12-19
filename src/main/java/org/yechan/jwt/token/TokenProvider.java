@@ -5,6 +5,7 @@ import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,6 +24,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class TokenProvider {
     public static final String AUTHORIZATION_HEADER = "Authorization";
+    public static final String SET_COOKIE_HEADER = "Set-Cookie";
     public static final String TOKEN_PREFIX = "Bearer ";
 
     @Value("${jwt.secretKey}")
@@ -35,6 +37,8 @@ public class TokenProvider {
     private Long refreshTokenValidTime;
 
     private final AccountDetailsService accountDetailsService;
+    
+    private final RedisTemplate<String,String> redisTemplate;
 
     @PostConstruct
     protected void init() {
@@ -42,7 +46,7 @@ public class TokenProvider {
     }
 
 
-    public TokenInfo createToken(String userPk, Collection<? extends GrantedAuthority> roles) {
+    public TokenInfo createTokens(String userPk, Collection<? extends GrantedAuthority> roles) {
         Claims claims = Jwts.claims().setSubject(userPk);
         claims.put("roles", roles);
 
@@ -68,7 +72,6 @@ public class TokenProvider {
                 .compact();
         
         return TokenInfo.builder()
-                .grantType(TOKEN_PREFIX)
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();
@@ -77,11 +80,11 @@ public class TokenProvider {
 
 
     public Authentication getAuthentication(String token) {
-        UserDetails userDetails = accountDetailsService.loadUserByUsername(this.getUserPrivateKey(token));
+        UserDetails userDetails = accountDetailsService.loadUserByUsername(this.getUsername(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
-    public String getUserPrivateKey(String token) {
+    public String getUsername(String token) {
         return Jwts.parserBuilder().setSigningKey(secretKey).build()
                 .parseClaimsJws(token)
                 .getBody()
@@ -97,11 +100,28 @@ public class TokenProvider {
         }
     }
 
-    public String resolveToken(HttpServletRequest request) {
+    public String resolveAccessToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(TOKEN_PREFIX)) {
             return bearerToken.substring(7);
         }
         return null;
+    }
+    
+    public Long getExpiredLeftSeconds(String refreshToken) {
+        long expirationTimeMillis = Jwts.parserBuilder().setSigningKey(secretKey).build()
+                .parseClaimsJws(refreshToken)
+                .getBody()
+                .getExpiration()
+                .getTime();
+        long currentTimeMillis = new Date().getTime();
+        return (expirationTimeMillis - currentTimeMillis) / 1000;
+    }
+    
+    public String createNewToken(String refreshToken) {
+        String username = getUsername(refreshToken);
+        Authentication authentication = getAuthentication(refreshToken);
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        return createTokens(username,authorities).getAccessToken();
     }
 }
