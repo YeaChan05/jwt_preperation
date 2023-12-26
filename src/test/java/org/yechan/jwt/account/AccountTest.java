@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.yechan.jwt.account.entity.Account;
+import org.yechan.jwt.account.repository.AccountRepository;
 
 import java.util.List;
 

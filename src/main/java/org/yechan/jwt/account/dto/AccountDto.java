@@ -1,6 +1,7 @@
-package org.yechan.jwt.account;
+package org.yechan.jwt.account.dto;
 
 import lombok.Value;
+import org.yechan.jwt.account.entity.Account;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

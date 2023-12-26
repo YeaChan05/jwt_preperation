@@ -1,4 +1,4 @@
-package org.yechan.jwt.config;
+package org.yechan.jwt.global.config;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -14,7 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.yechan.jwt.token.JwtFilter;
+import org.yechan.jwt.account.config.JwtFilter;
 
 @Configuration
 @RequiredArgsConstructor

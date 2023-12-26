@@ -1,11 +1,11 @@
-package org.yechan.jwt.account;
+package org.yechan.jwt.account.dto;
 
 import lombok.Data;
 
 import java.io.Serializable;
 
 @Data
-public class LoginBody implements Serializable {
+public class LoginFormRequest implements Serializable {
     private final String username;
     private final String password;
 }

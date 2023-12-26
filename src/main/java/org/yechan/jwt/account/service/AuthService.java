@@ -1,4 +1,4 @@
-package org.yechan.jwt.account;
+package org.yechan.jwt.account.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,8 +9,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.yechan.jwt.account.dto.LoginFormRequest;
+import org.yechan.jwt.account.dto.AuthenticationResponse;
 import org.yechan.jwt.account.entity.AccountDetails;
-import org.yechan.jwt.token.TokenProvider;
 
 import java.time.Duration;
 import java.util.Collection;
@@ -22,8 +23,8 @@ public class AuthService {
     private final TokenProvider tokenProvider;
     private final StringRedisTemplate redisTemplate;
     
-    public TokenInfo login(LoginBody loginBody) {
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginBody.getUsername(), loginBody.getPassword());
+    public AuthenticationResponse login(LoginFormRequest loginFormRequest) {
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginFormRequest.getUsername(), loginFormRequest.getPassword());
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         AccountDetails principal = (AccountDetails) authentication.getPrincipal();
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();

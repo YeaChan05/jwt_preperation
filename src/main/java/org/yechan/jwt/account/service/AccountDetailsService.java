@@ -1,4 +1,4 @@
-package org.yechan.jwt.account;
+package org.yechan.jwt.account.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yechan.jwt.account.entity.Account;
 import org.yechan.jwt.account.entity.AccountDetails;
+import org.yechan.jwt.account.repository.AccountRepository;
 
 import java.util.Optional;
 

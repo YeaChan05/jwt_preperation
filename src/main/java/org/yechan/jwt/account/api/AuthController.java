@@ -1,4 +1,4 @@
-package org.yechan.jwt.account;
+package org.yechan.jwt.account.api;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +7,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.yechan.jwt.account.service.AuthService;
+import org.yechan.jwt.account.dto.LoginFormRequest;
+import org.yechan.jwt.account.dto.AuthenticationResponse;
 
 @Slf4j
 @RestController
@@ -16,10 +19,10 @@ public class AuthController {
     private final AuthService authService;
     
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginBody loginBody) {
-        TokenInfo tokenInfo = authService.login(loginBody);
-        String accessToken = tokenInfo.getAccessToken();
-        String refreshToken = tokenInfo.getRefreshToken();
+    public ResponseEntity<?> login(@Valid @RequestBody LoginFormRequest loginFormRequest) {
+        AuthenticationResponse authenticationResponse = authService.login(loginFormRequest);
+        String accessToken = authenticationResponse.getAccessToken();
+        String refreshToken = authenticationResponse.getRefreshToken();
         return ResponseEntity.status(HttpStatus.OK)
                 .header(HttpHeaders.SET_COOKIE, refreshToken)
                 .body(accessToken);

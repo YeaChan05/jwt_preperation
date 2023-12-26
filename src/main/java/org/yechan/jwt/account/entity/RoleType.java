@@ -1,4 +1,4 @@
-package org.yechan.jwt.account;
+package org.yechan.jwt.account.entity;
 
 public enum RoleType {
     ADMIN, USER, ANONYMOUS;

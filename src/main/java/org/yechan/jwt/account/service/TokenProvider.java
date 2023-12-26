@@ -1,4 +1,4 @@
-package org.yechan.jwt.token;
+package org.yechan.jwt.account.service;
 
 import io.jsonwebtoken.*;
 import jakarta.annotation.PostConstruct;
@@ -11,8 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import org.yechan.jwt.account.AccountDetailsService;
-import org.yechan.jwt.account.TokenInfo;
+import org.yechan.jwt.account.dto.AuthenticationResponse;
 
 import java.util.Base64;
 import java.util.Collection;
@@ -42,7 +41,7 @@ public class TokenProvider {
     }
 
 
-    public TokenInfo createTokens(String userPk, Collection<? extends GrantedAuthority> roles) {
+    public AuthenticationResponse createTokens(String userPk, Collection<? extends GrantedAuthority> roles) {
         Claims claims = Jwts.claims().setSubject(userPk);
         claims.put("roles", roles);
 
@@ -67,7 +66,7 @@ public class TokenProvider {
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
         
-        return TokenInfo.builder()
+        return AuthenticationResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();

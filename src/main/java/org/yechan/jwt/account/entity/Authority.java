@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
-import org.yechan.jwt.account.RoleType;
 
 @Entity
 @Table(name = "authority")

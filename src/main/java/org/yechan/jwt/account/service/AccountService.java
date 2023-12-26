@@ -1,13 +1,16 @@
-package org.yechan.jwt.account;
+package org.yechan.jwt.account.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.yechan.jwt.account.dto.AccountDto;
+import org.yechan.jwt.account.entity.RoleType;
 import org.yechan.jwt.account.entity.Account;
 import org.yechan.jwt.account.entity.AccountDetails;
 import org.yechan.jwt.account.entity.Authority;
+import org.yechan.jwt.account.repository.AccountRepository;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -15,7 +18,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class AccountService {
-    private final  AccountRepository accountRepository;
+    private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
     @Transactional
     public Account signup(AccountDto accountDto) {
