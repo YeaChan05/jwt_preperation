@@ -3,9 +3,9 @@ package org.yechan.jwt.account.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
-import org.yechan.jwt.account.entity.Authority;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -18,7 +18,7 @@ import java.util.Set;
 public class Account {
     @Id
     @Column(name = "account_id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
     @Column(unique = true)
@@ -41,5 +41,5 @@ public class Account {
             name = "account_authority",
             joinColumns = {@JoinColumn(name = "account_id", referencedColumnName = "account_id")},
             inverseJoinColumns = {@JoinColumn(name = "authority_id", referencedColumnName = "role_type")})
-    private Set<Authority> authorities;
+    private Set<Authority> authorities=new HashSet<>();
 }

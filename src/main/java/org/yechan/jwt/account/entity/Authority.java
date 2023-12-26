@@ -11,7 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 public class Authority implements GrantedAuthority {
     @Id
     @Column(name = "authority_id")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long authorityId;
     
     @Enumerated(EnumType.STRING)
