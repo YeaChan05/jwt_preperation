@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.yechan.jwt.account.dto.LoginFormRequest;
 import org.yechan.jwt.account.dto.AuthenticationResponse;
-import org.yechan.jwt.account.entity.AccountDetails;
 
 import java.time.Duration;
 import java.util.Collection;

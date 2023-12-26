@@ -1,8 +1,10 @@
-package org.yechan.jwt.account.entity;
+package org.yechan.jwt.account.service;
 
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.yechan.jwt.account.entity.Account;
+
 import java.util.Collection;
 import java.util.Set;
 

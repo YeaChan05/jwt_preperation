@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.yechan.jwt.account.dto.AccountDto;
 import org.yechan.jwt.account.entity.RoleType;
 import org.yechan.jwt.account.entity.Account;
-import org.yechan.jwt.account.entity.AccountDetails;
 import org.yechan.jwt.account.entity.Authority;
 import org.yechan.jwt.account.repository.AccountRepository;
 
