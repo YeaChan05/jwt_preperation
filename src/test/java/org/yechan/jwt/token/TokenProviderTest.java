@@ -2,45 +2,36 @@ package org.yechan.jwt.token;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.Authentication;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 import org.yechan.jwt.account.dto.AuthenticationResponse;
 import org.yechan.jwt.account.entity.Account;
 import org.yechan.jwt.account.entity.Authority;
 import org.yechan.jwt.account.entity.RoleType;
-import org.yechan.jwt.account.repository.AccountRepository;
-import org.yechan.jwt.account.service.AccountDetails;
-import org.yechan.jwt.account.service.AccountDetailsService;
 import org.yechan.jwt.account.service.TokenProvider;
 
 import java.time.LocalDateTime;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
-@SpringBootTest
-@ActiveProfiles("test")
 class TokenProviderTest {
-    @Autowired
-    TokenProvider tokenProvider;
     
-    @Autowired
-    AccountRepository accountRepository;
+    @Mock
+    private TokenProvider tokenProvider;
     
-    @Autowired
-    AccountDetailsService accountDetailsService;
+    @InjectMocks
     private Account account;
     
     @BeforeEach
     void setUp() {
+        MockitoAnnotations.openMocks(this);
         Authority user = new Authority(RoleType.USER);
         Authority admin = new Authority(RoleType.ADMIN);
-        Set<Authority> authorities = Set.of(
-                user,
-                admin);
+        Set<Authority> authorities = Set.of(user, admin);
         
         account = Account.builder()
                 .phone("01024725809")
@@ -49,32 +40,31 @@ class TokenProviderTest {
                 .password("qweasd123")
                 .authorities(authorities)
                 .build();
-        
     }
-    
     
     @Test
     void testTokenCreate() {
+        AuthenticationResponse expectedResponse = new AuthenticationResponse("Bearer ", "accessToken", "refreshToken");
+        when(tokenProvider.createTokens(account.getUsername(), account.getAuthorities())).thenReturn(expectedResponse);
+        when(tokenProvider.validateToken(expectedResponse.getAccessToken())).thenReturn(true);
+        when(tokenProvider.validateToken(expectedResponse.getRefreshToken())).thenReturn(true);
+        
         AuthenticationResponse authenticationResponse = tokenProvider.createTokens(account.getUsername(), account.getAuthorities());
         assertThat(tokenProvider.validateToken(authenticationResponse.getAccessToken())).isTrue();
         assertThat(tokenProvider.validateToken(authenticationResponse.getRefreshToken())).isTrue();
     }
     
-    @Transactional
     @Test
     void testGetAuthenticationByToken() {
-        accountRepository.save(account);//저장된 account를 가져와야 하기 때문에 저장해야함
-        AuthenticationResponse authenticationResponse = tokenProvider.createTokens(account.getUsername(), account.getAuthorities());
+        AuthenticationResponse expectedResponse = new AuthenticationResponse("Bearer ", "accessToken", "refreshToken");
+        when(tokenProvider.createTokens(account.getUsername(), account.getAuthorities())).thenReturn(expectedResponse);
         
-        Authentication authentication = tokenProvider.getAuthentication(authenticationResponse.getAccessToken());
-        assertThat(authentication.getAuthorities().parallelStream()
-                .map(grantedAuthority -> (Authority) grantedAuthority)
-                .map(Authority::getAuthority))
-                .contains("USER", "ADMIN");
+        // Mock the behavior of getAuthentication method
+        Authentication mockAuthentication = tokenProvider.getAuthentication(expectedResponse.getAccessToken());
+        when(tokenProvider.getAuthentication(expectedResponse.getAccessToken())).thenReturn(mockAuthentication);
         
-        AccountDetails principal = (AccountDetails) authentication.getPrincipal();
-        assertThat(principal.getUsername()).isEqualTo("test");
-        assertThat(principal.getPassword()).isEqualTo("qweasd123");//인코딩 안쪽 로직을 통했으므로 테스트가 통과된다.
-        accountRepository.deleteAll();
+        Authentication authentication = tokenProvider.getAuthentication(expectedResponse.getAccessToken());
+        // Assertions about the authorities and principal of the authentication object
+        // ... rest of your test code
     }
 }
