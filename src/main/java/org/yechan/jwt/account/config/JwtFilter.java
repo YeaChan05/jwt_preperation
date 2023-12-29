@@ -20,11 +20,6 @@ public class JwtFilter extends OncePerRequestFilter {
 
 	private final TokenProvider tokenProvider;
 	
-	@Override
-	protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-		return request.getRequestURI().contains("/refresh");//이땐 이미 access token이 만료되었을 수 있다.
-	}
-	
 	@SneakyThrows
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
