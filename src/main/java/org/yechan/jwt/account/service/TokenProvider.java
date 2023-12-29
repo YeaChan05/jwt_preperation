@@ -67,6 +67,7 @@ public class TokenProvider {
                 .compact();
         
         return AuthenticationResponse.builder()
+                .grantType(TOKEN_PREFIX)
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build();
@@ -113,7 +114,7 @@ public class TokenProvider {
         return (expirationTimeMillis - currentTimeMillis) / 1000;
     }
     
-    public String createNewToken(String refreshToken) {
+    public String createNewAccessToken(String refreshToken) {
         String username = getUsername(refreshToken);
         Authentication authentication = getAuthentication(refreshToken);
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();

@@ -46,6 +46,6 @@ public class AuthService {
             throw new IllegalAccessException("is invalid token");
         if(redisTemplate.opsForValue().get(refreshToken)!=null)
             throw new IllegalAccessError("is banned token");
-        return tokenProvider.createNewToken(refreshToken);
+        return tokenProvider.createNewAccessToken(refreshToken);
     }
 }
