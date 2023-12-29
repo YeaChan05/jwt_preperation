@@ -1,5 +1,6 @@
 package org.yechan.jwt.account.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
@@ -7,7 +8,6 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-
 @Entity
 @Table(name = "account")
 @Builder
@@ -27,9 +27,9 @@ public class Account {
     private String password;
     
     private String phone;
-    
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdDateTime;
-    
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime modifiedDateTime;
     
     @JsonIgnore
