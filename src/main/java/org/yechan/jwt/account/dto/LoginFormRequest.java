@@ -1,11 +1,13 @@
 package org.yechan.jwt.account.dto;
 
+import lombok.Builder;
 import lombok.Data;
-
-import java.io.Serializable;
+import lombok.extern.jackson.Jacksonized;
 
 @Data
-public class LoginFormRequest implements Serializable {
+@Builder
+@Jacksonized
+public class LoginFormRequest {
     private final String username;
     private final String password;
 }
