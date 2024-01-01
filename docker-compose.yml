@@ -28,6 +28,9 @@ services:
       - "mode=standalone"
     ports:
       - 6379:6379
+    environment:
+      - REDIS_HOST=blacklist_cache
+      - REDIS_PORT=6379
 
   application:
     build:
@@ -37,6 +40,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mariadb://database:3306/auth_db
       SPRING_DATASOURCE_USERNAME: yechan
       SPRING_DATASOURCE_PASSWORD: 0joker@
+
     ports:
       - 8080:8080
     depends_on:
