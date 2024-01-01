@@ -4,11 +4,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.transaction.annotation.Transactional;
 import org.yechan.jwt.account.entity.Account;
+import org.yechan.jwt.account.entity.AccountAuthority;
 import org.yechan.jwt.account.entity.Authority;
 import org.yechan.jwt.account.entity.RoleType;
 
-import java.util.Set;
+import java.util.HashSet;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -16,25 +18,40 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class AccountRepositoryTest {
     @Autowired
     AccountRepository accountRepository;
+    @Autowired
+    AuthorityRepository authorityRepository;
     
     Account account;
+    
     @BeforeEach
+    @Transactional
     void setUp() {
-        Authority user = new Authority(RoleType.USER);
-        Authority admin = new Authority(RoleType.ADMIN);
-        Set<Authority> authorities = Set.of(user, admin);
-        
+        authorityRepository.save(new Authority(RoleType.USER));
+        authorityRepository.save(new Authority(RoleType.ADMIN));
+        Authority user = authorityRepository.findByRoleType(RoleType.USER).orElseThrow();
+        Authority admin = authorityRepository.findByRoleType(RoleType.ADMIN).orElseThrow();
         account = Account.builder()
                 .phone("01024725809")
                 .username("test")
                 .password("qweasd123")
-                .authorities(authorities)
+                .accountAuthorities(new HashSet<>())
                 .build();
+        
+        AccountAuthority userAuthority = AccountAuthority.builder()
+                .authority(user)
+                .account(account)
+                .build();
+        AccountAuthority adminAuthority = AccountAuthority.builder()
+                .authority(admin)
+                .account(account)
+                .build();
+        account.getAccountAuthorities().add(userAuthority);
+        account.getAccountAuthorities().add(adminAuthority);
         accountRepository.save(account);
     }
     
     @Test
     void testFindOneWithAuthoritiesByUsername() {
-        assertThat(accountRepository.findOneWithAuthoritiesByUsername("test").get().getAuthorities()).isNotEmpty();
+        assertThat(accountRepository.findOneWithAuthoritiesByUsername("test").get().getAccountAuthorities()).isNotEmpty();
     }
 }
