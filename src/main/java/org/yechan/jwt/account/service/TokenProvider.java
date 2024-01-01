@@ -1,6 +1,7 @@
 package org.yechan.jwt.account.service;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.yechan.jwt.account.dto.AuthenticationResponse;
 
+import javax.crypto.SecretKey;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.Date;
@@ -55,7 +57,7 @@ public class TokenProvider {
                 .setClaims(claims)
                 .setIssuedAt(new Date(now))
                 .setExpiration(new Date(now + accessTokenValidTime))
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .signWith(getSigningKey())
                 .compact();
         
         String refreshToken = Jwts.builder()
@@ -63,7 +65,7 @@ public class TokenProvider {
                 .setClaims(claims)
                 .setIssuedAt(new Date(now))
                 .setExpiration(new Date(now + refreshTokenValidTime))
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .signWith(getSigningKey())
                 .compact();
         
         return AuthenticationResponse.builder()
@@ -81,7 +83,7 @@ public class TokenProvider {
     }
 
     public String getUsername(String token) {
-        return Jwts.parserBuilder().setSigningKey(secretKey).build()
+        return Jwts.parserBuilder().setSigningKey(getSigningKey()).build()
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
@@ -89,7 +91,7 @@ public class TokenProvider {
 
     public boolean validateToken(String token) {
         try {
-            Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
+            Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
             return !claims.getBody().getExpiration().before(new Date());
         } catch (Exception e) {
             return false;
@@ -105,7 +107,7 @@ public class TokenProvider {
     }
     
     public Long getExpiredLeftSeconds(String refreshToken) {
-        long expirationTimeMillis = Jwts.parserBuilder().setSigningKey(secretKey).build()
+        long expirationTimeMillis = Jwts.parserBuilder().setSigningKey(getSigningKey()).build()
                 .parseClaimsJws(refreshToken)
                 .getBody()
                 .getExpiration()
@@ -119,5 +121,10 @@ public class TokenProvider {
         Authentication authentication = getAuthentication(refreshToken);
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         return createTokens(username,authorities).getAccessToken();
+    }
+    
+    private SecretKey getSigningKey() {
+        byte[] keyBytes = Base64.getDecoder().decode(secretKey);
+        return Keys.hmacShaKeyFor(keyBytes);
     }
 }
