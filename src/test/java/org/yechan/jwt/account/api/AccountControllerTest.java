@@ -13,14 +13,11 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.yechan.jwt.account.dto.AccountDto;
+import org.yechan.jwt.account.dto.SignupRequest;
 import org.yechan.jwt.account.entity.Account;
 import org.yechan.jwt.account.service.AccountService;
 import org.yechan.jwt.account.service.TokenProvider;
 import org.yechan.jwt.global.config.SecurityConfig;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -53,25 +50,20 @@ class AccountControllerTest {
     
     @Test
     void signup() throws Exception {
-        LocalDateTime now = LocalDateTime.parse(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")));
-        AccountDto accountDto = AccountDto.builder()
+        SignupRequest signupRequest = SignupRequest.builder()
                 .phone("010-8744-5809")
                 .username("test")
-                .createdDateTime(now)
-                .modifiedDateTime(now)
                 .password("qwe123").build();
         
         Account expectedAccount = Account.builder()
                 .username("test")
                 .password("qwe123")
                 .phone("010-8744-5809")
-                .createdDateTime(now)
-                .modifiedDateTime(now)
                 .build();
         
-        given(accountService.signup(any(AccountDto.class))).willReturn(expectedAccount);
+        given(accountService.signup(any(SignupRequest.class))).willReturn(expectedAccount);
         
-        String reqBody = objectMapper.writeValueAsString(accountDto);
+        String reqBody = objectMapper.writeValueAsString(signupRequest);
         
         mockMvc.perform(post("/account/signup")
                         .contentType(MediaType.APPLICATION_JSON)

@@ -12,7 +12,6 @@ import org.yechan.jwt.account.entity.Authority;
 import org.yechan.jwt.account.entity.RoleType;
 import org.yechan.jwt.account.service.TokenProvider;
 
-import java.time.LocalDateTime;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -35,7 +34,6 @@ class TokenProviderTest {
         
         account = Account.builder()
                 .phone("01024725809")
-                .createdDateTime(LocalDateTime.now())
                 .username("test")
                 .password("qweasd123")
                 .authorities(authorities)

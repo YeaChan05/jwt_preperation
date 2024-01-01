@@ -23,12 +23,11 @@ import org.yechan.jwt.account.service.AuthService;
 import org.yechan.jwt.account.service.TokenProvider;
 import org.yechan.jwt.global.config.SecurityConfig;
 
-import java.time.LocalDateTime;
-
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ActiveProfiles("test")
 @SpringBootTest
@@ -68,13 +67,10 @@ class AuthControllerTest {
                 .build();
         
         
-        LocalDateTime now = LocalDateTime.now();
         expectedAccount = Account.builder()
                 .username("test")
                 .password(passwordEncoder.encode(password))
                 .phone("010-8744-5809")
-                .createdDateTime(now)
-                .modifiedDateTime(now)
                 .build();
         accountRepository.save(expectedAccount);
     }
