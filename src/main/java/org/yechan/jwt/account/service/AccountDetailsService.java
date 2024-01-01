@@ -9,20 +9,14 @@ import org.springframework.transaction.annotation.Transactional;
 import org.yechan.jwt.account.entity.Account;
 import org.yechan.jwt.account.repository.AccountRepository;
 
-import java.util.Optional;
-
 @Service
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class AccountDetailsService implements UserDetailsService {
     private final AccountRepository accountRepository;
     @Override
+    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<Account> account = accountRepository.findByUsername(username);
-        if(account.isEmpty()){
-            //TODO: 2023-12-11 오후 5:29 : 계정 발견 실패시 예외처리
-            throw new RuntimeException();
-        }
-        return new AccountDetails(account.get());
+        Account account = accountRepository.findOneWithAuthoritiesByUsername(username).orElseThrow();
+        return new AccountDetails(account);
     }
 }

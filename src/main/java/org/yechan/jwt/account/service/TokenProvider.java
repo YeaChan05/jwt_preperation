@@ -41,9 +41,9 @@ public class TokenProvider {
     }
 
 
-    public AuthenticationResponse createTokens(String userPk, Collection<? extends GrantedAuthority> roles) {
-        Claims claims = Jwts.claims().setSubject(userPk);
-        claims.put("roles", roles);
+    public AuthenticationResponse createTokens(String username, Collection<? extends GrantedAuthority> authorities) {
+        Claims claims = Jwts.claims().setSubject(username);
+        claims.put("authorities", authorities);
 
         Header<?> header = Jwts.header();
 
