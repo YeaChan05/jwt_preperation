@@ -5,46 +5,64 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.yechan.jwt.account.dto.AccountInformationResponse;
 import org.yechan.jwt.account.dto.SignupRequest;
-import org.yechan.jwt.account.entity.RoleType;
+import org.yechan.jwt.account.dto.SignupResponse;
 import org.yechan.jwt.account.entity.Account;
+import org.yechan.jwt.account.entity.AccountAuthority;
 import org.yechan.jwt.account.entity.Authority;
+import org.yechan.jwt.account.entity.RoleType;
 import org.yechan.jwt.account.repository.AccountRepository;
+import org.yechan.jwt.account.repository.AuthorityRepository;
 
-import java.util.Collections;
-import java.util.Optional;
+import java.util.HashSet;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class AccountService {
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AuthorityRepository authorityRepository;
+    
     @Transactional
-    public Account signup(SignupRequest signupRequest) {
+    public SignupResponse signup(SignupRequest signupRequest) {
         if (accountRepository.findOneWithAuthoritiesByUsername(signupRequest.getUsername()).orElse(null) != null) {
             throw new RuntimeException("이미 가입되어 있는 유저입니다.");
         }
-
-        Authority authority = Authority.builder()
-                .roleType(RoleType.USER)
-                .build();
-
+        Authority user = authorityRepository.findByRoleType(RoleType.USER).orElseThrow();
+        
         // 유저 정보를 만들어서 save
-        Account account=Account.builder()
+        Account account = Account.builder()
                 .username(signupRequest.getUsername())
                 .password(passwordEncoder.encode(signupRequest.getPassword()))
                 .phone(signupRequest.getPhone())
-                .authorities(Collections.singleton(authority))
+                .accountAuthorities(new HashSet<>())
                 .activated(true)
                 .build();
-
-        return accountRepository.save(account);
+        
+        AccountAuthority accountAuthority = AccountAuthority.builder()
+                .authority(user)
+                .account(account)
+                .build();
+        account.getAccountAuthorities().add(accountAuthority);
+        Account savedAccount = accountRepository.saveAndFlush(account);
+        
+        return SignupResponse.builder()
+                .username(savedAccount.getUsername())
+                .authorities(savedAccount.getAccountAuthorities().stream()
+                        .map(AccountAuthority::getAuthority)
+                        .map(Authority::getAuthority)
+                        .collect(Collectors.toSet()))
+                .createdDate(account.getCreatedDate())
+                .modifiedDate(account.getModifiedDate())
+                .build();
     }
     
-    public Account getMyInformation() {
-        AccountDetails principal = (AccountDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public AccountInformationResponse getMyInformation() {
+        AccountDetails principal = (AccountDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = principal.getAccount().getUsername();
-        Optional<Account> account = accountRepository.findByUsername(username);
-        return account.orElse(null);
+        Account account = accountRepository.findOneWithAuthoritiesByUsername(username).orElseThrow();
+        return AccountInformationResponse.of(account);
     }
 }
