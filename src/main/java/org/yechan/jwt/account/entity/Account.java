@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.HashSet;
 import java.util.Set;
+
 @Entity
 @Table(name = "account")
 @Builder
@@ -13,7 +13,7 @@ import java.util.Set;
 @Getter
 @Setter
 @AllArgsConstructor
-public class Account extends BaseTimeEntity{
+public class Account extends BaseTimeEntity {
     @Id
     @Column(name = "account_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,10 +30,6 @@ public class Account extends BaseTimeEntity{
     @Column(name = "activated")
     private boolean activated;
     
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "account_authority",
-            joinColumns = {@JoinColumn(name = "account_id", referencedColumnName = "account_id")},
-            inverseJoinColumns = {@JoinColumn(name = "authority_id", referencedColumnName = "role_type")})
-    private Set<Authority> authorities=new HashSet<>();
+    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<AccountAuthority> accountAuthorities;
 }
