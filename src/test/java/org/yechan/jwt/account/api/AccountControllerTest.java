@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.yechan.jwt.account.dto.SignupRequest;
+import org.yechan.jwt.account.dto.SignupResponse;
 import org.yechan.jwt.account.entity.Account;
 import org.yechan.jwt.account.service.AccountService;
 import org.yechan.jwt.account.service.TokenProvider;
@@ -60,8 +61,16 @@ class AccountControllerTest {
                 .password("qwe123")
                 .phone("010-8744-5809")
                 .build();
-        
-        given(accountService.signup(any(SignupRequest.class))).willReturn(expectedAccount);
+        SignupResponse signupResponse = SignupResponse.builder()
+                .username(expectedAccount.getUsername())
+                .createdDate(expectedAccount.getCreatedDate())
+                .modifiedDate(expectedAccount.getModifiedDate())
+                .build();
+        given(accountService.signup(any(SignupRequest.class))).willReturn(SignupResponse.builder()
+                        .username(expectedAccount.getUsername())
+                        .createdDate(expectedAccount.getCreatedDate())
+                        .modifiedDate(expectedAccount.getModifiedDate())
+                .build());
         
         String reqBody = objectMapper.writeValueAsString(signupRequest);
         
@@ -69,7 +78,7 @@ class AccountControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(reqBody))
                 .andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(expectedAccount)))
+                .andExpect(content().json(objectMapper.writeValueAsString(signupResponse)))
                 .andDo(log());
     }
 }

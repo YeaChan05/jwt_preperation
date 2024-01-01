@@ -4,9 +4,10 @@ import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.yechan.jwt.account.entity.Account;
+import org.yechan.jwt.account.entity.AccountAuthority;
 
 import java.util.Collection;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 public class AccountDetails implements UserDetails {
@@ -18,7 +19,9 @@ public class AccountDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return account.getAuthorities();
+        return account.getAccountAuthorities().stream()
+                .map(AccountAuthority::getAuthority)
+                .collect(Collectors.toSet());
     }
 
     @Override
