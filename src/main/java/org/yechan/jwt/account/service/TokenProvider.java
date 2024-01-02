@@ -34,12 +34,15 @@ public class TokenProvider {
     
     @Value("${jwt.refresh-token-expiration-seconds}")
     private Long refreshTokenValidTime;
+    
+    private SecretKey key;
 
     private final AccountDetailsService accountDetailsService;
 
     @PostConstruct
     protected void init() {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+        key=getSigningKey();
     }
 
 
@@ -57,7 +60,7 @@ public class TokenProvider {
                 .setClaims(claims)
                 .setIssuedAt(new Date(now))
                 .setExpiration(new Date(now + accessTokenValidTime))
-                .signWith(getSigningKey())
+                .signWith(key)
                 .compact();
         
         String refreshToken = Jwts.builder()
@@ -65,7 +68,7 @@ public class TokenProvider {
                 .setClaims(claims)
                 .setIssuedAt(new Date(now))
                 .setExpiration(new Date(now + refreshTokenValidTime))
-                .signWith(getSigningKey())
+                .signWith(key)
                 .compact();
         
         return AuthenticationResponse.builder()
@@ -83,7 +86,7 @@ public class TokenProvider {
     }
 
     public String getUsername(String token) {
-        return Jwts.parserBuilder().setSigningKey(getSigningKey()).build()
+        return Jwts.parserBuilder().setSigningKey(key).build()
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
@@ -91,7 +94,7 @@ public class TokenProvider {
 
     public boolean validateToken(String token) {
         try {
-            Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
+            Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return !claims.getBody().getExpiration().before(new Date());
         } catch (Exception e) {
             return false;
@@ -107,7 +110,7 @@ public class TokenProvider {
     }
     
     public Long getExpiredLeftSeconds(String refreshToken) {
-        long expirationTimeMillis = Jwts.parserBuilder().setSigningKey(getSigningKey()).build()
+        long expirationTimeMillis = Jwts.parserBuilder().setSigningKey(key).build()
                 .parseClaimsJws(refreshToken)
                 .getBody()
                 .getExpiration()
