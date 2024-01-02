@@ -6,9 +6,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.yechan.jwt.account.dto.AccountInformationResponse;
-import org.yechan.jwt.account.dto.SignupRequest;
-import org.yechan.jwt.account.dto.SignupResponse;
+import org.yechan.jwt.account.dto.response.AccountInformationResponse;
+import org.yechan.jwt.account.dto.request.SignupRequest;
+import org.yechan.jwt.account.dto.response.SignupResponse;
 import org.yechan.jwt.account.service.AccountService;
 
 @Slf4j

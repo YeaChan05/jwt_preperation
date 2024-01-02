@@ -1,12 +1,12 @@
-package org.yechan.jwt.account.service;
+package org.yechan.jwt.account.common;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.yechan.jwt.account.entity.Authority;
-import org.yechan.jwt.account.entity.RoleType;
+import org.yechan.jwt.account.domain.entity.Authority;
+import org.yechan.jwt.account.domain.RoleType;
 import org.yechan.jwt.account.repository.AuthorityRepository;
 
 import java.util.Arrays;

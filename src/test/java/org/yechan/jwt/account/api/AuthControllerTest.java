@@ -14,13 +14,13 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-import org.yechan.jwt.account.config.JwtFilter;
-import org.yechan.jwt.account.dto.AuthenticationResponse;
-import org.yechan.jwt.account.dto.LoginFormRequest;
-import org.yechan.jwt.account.entity.Account;
+import org.yechan.jwt.account.common.JwtFilter;
+import org.yechan.jwt.account.dto.response.AuthenticationResponse;
+import org.yechan.jwt.account.dto.request.LoginFormRequest;
+import org.yechan.jwt.account.domain.entity.Account;
 import org.yechan.jwt.account.repository.AccountRepository;
 import org.yechan.jwt.account.service.AuthService;
-import org.yechan.jwt.account.service.TokenProvider;
+import org.yechan.jwt.account.common.TokenProvider;
 import org.yechan.jwt.global.config.SecurityConfig;
 
 import static org.mockito.BDDMockito.given;

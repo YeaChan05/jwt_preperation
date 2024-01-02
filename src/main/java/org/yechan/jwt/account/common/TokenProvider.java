@@ -1,4 +1,4 @@
-package org.yechan.jwt.account.service;
+package org.yechan.jwt.account.common;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -12,7 +12,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import org.yechan.jwt.account.dto.AuthenticationResponse;
+import org.yechan.jwt.account.dto.response.AuthenticationResponse;
+import org.yechan.jwt.account.service.AccountDetailsService;
 
 import javax.crypto.SecretKey;
 import java.util.Base64;

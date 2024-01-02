@@ -1,4 +1,4 @@
-package org.yechan.jwt.account.entity;
+package org.yechan.jwt.account.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.EntityListeners;

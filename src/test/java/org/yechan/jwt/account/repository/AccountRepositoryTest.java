@@ -5,10 +5,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.transaction.annotation.Transactional;
-import org.yechan.jwt.account.entity.Account;
-import org.yechan.jwt.account.entity.AccountAuthority;
-import org.yechan.jwt.account.entity.Authority;
-import org.yechan.jwt.account.entity.RoleType;
+import org.yechan.jwt.account.domain.entity.Account;
+import org.yechan.jwt.account.domain.entity.AccountAuthority;
+import org.yechan.jwt.account.domain.entity.Authority;
+import org.yechan.jwt.account.domain.RoleType;
 
 import java.util.HashSet;
 

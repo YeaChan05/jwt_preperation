@@ -1,9 +1,10 @@
-package org.yechan.jwt.account.entity;
+package org.yechan.jwt.account.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
+import org.yechan.jwt.account.domain.RoleType;
 
 import java.util.Set;
 
@@ -12,7 +13,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class Authority implements GrantedAuthority {
     @Id
-    @Column(name = "authority_id")
+    @Column(name = "authority_id",nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     

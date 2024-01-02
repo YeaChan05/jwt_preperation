@@ -1,4 +1,4 @@
-package org.yechan.jwt.account.dto;
+package org.yechan.jwt.account.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;

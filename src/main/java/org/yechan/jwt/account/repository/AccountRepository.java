@@ -3,7 +3,7 @@ package org.yechan.jwt.account.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.yechan.jwt.account.entity.Account;
+import org.yechan.jwt.account.domain.entity.Account;
 
 import java.util.Optional;
 

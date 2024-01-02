@@ -1,10 +1,10 @@
-package org.yechan.jwt.account.dto;
+package org.yechan.jwt.account.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;
-import org.yechan.jwt.account.entity.Account;
-import org.yechan.jwt.account.entity.AccountAuthority;
-import org.yechan.jwt.account.entity.Authority;
+import org.yechan.jwt.account.domain.entity.Account;
+import org.yechan.jwt.account.domain.entity.AccountAuthority;
+import org.yechan.jwt.account.domain.entity.Authority;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -28,5 +28,4 @@ public class AccountInformationResponse {
                 .authorities(account.getAccountAuthorities().stream().map(AccountAuthority::getAuthority).map(Authority::getAuthority).collect(Collectors.toSet()))
                 .build();
     }
-    
 }

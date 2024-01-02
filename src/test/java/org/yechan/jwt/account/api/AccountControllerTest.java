@@ -13,11 +13,11 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.yechan.jwt.account.dto.SignupRequest;
-import org.yechan.jwt.account.dto.SignupResponse;
-import org.yechan.jwt.account.entity.Account;
+import org.yechan.jwt.account.common.TokenProvider;
+import org.yechan.jwt.account.domain.entity.Account;
+import org.yechan.jwt.account.dto.request.SignupRequest;
+import org.yechan.jwt.account.dto.response.SignupResponse;
 import org.yechan.jwt.account.service.AccountService;
-import org.yechan.jwt.account.service.TokenProvider;
 import org.yechan.jwt.global.config.SecurityConfig;
 
 import static org.mockito.ArgumentMatchers.any;

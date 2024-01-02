@@ -6,8 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.yechan.jwt.account.dto.AuthenticationResponse;
-import org.yechan.jwt.account.dto.LoginFormRequest;
+import org.yechan.jwt.account.dto.response.AuthenticationResponse;
+import org.yechan.jwt.account.dto.request.LoginFormRequest;
 import org.yechan.jwt.account.service.AuthService;
 
 @Slf4j

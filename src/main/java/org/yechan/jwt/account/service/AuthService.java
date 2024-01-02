@@ -9,8 +9,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.yechan.jwt.account.dto.LoginFormRequest;
-import org.yechan.jwt.account.dto.AuthenticationResponse;
+import org.yechan.jwt.account.common.TokenProvider;
+import org.yechan.jwt.account.dto.AccountDetails;
+import org.yechan.jwt.account.dto.request.LoginFormRequest;
+import org.yechan.jwt.account.dto.response.AuthenticationResponse;
 
 import java.time.Duration;
 import java.util.Collection;

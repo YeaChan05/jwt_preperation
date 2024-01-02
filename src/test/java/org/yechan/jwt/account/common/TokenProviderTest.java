@@ -1,4 +1,4 @@
-package org.yechan.jwt.token;
+package org.yechan.jwt.account.common;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,13 +8,12 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.Authentication;
-import org.yechan.jwt.account.dto.AuthenticationResponse;
-import org.yechan.jwt.account.entity.Account;
-import org.yechan.jwt.account.entity.AccountAuthority;
-import org.yechan.jwt.account.entity.Authority;
-import org.yechan.jwt.account.entity.RoleType;
+import org.yechan.jwt.account.domain.RoleType;
+import org.yechan.jwt.account.domain.entity.Account;
+import org.yechan.jwt.account.domain.entity.AccountAuthority;
+import org.yechan.jwt.account.domain.entity.Authority;
+import org.yechan.jwt.account.dto.response.AuthenticationResponse;
 import org.yechan.jwt.account.repository.AuthorityRepository;
-import org.yechan.jwt.account.service.TokenProvider;
 
 import java.util.HashSet;
 import java.util.stream.Collectors;
