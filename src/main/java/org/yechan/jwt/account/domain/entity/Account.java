@@ -1,8 +1,9 @@
-package org.yechan.jwt.account.entity;
+package org.yechan.jwt.account.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
+import org.yechan.jwt.account.domain.BaseTimeEntity;
 
 import java.util.Set;
 
@@ -15,7 +16,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class Account extends BaseTimeEntity {
     @Id
-    @Column(name = "account_id")
+    @Column(name = "account_id",nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
@@ -32,4 +33,9 @@ public class Account extends BaseTimeEntity {
     
     @OneToMany(mappedBy = "account", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<AccountAuthority> accountAuthorities;
+    
+    public void addAccountAuthorities(Set<AccountAuthority> accountAuthorities) {
+        this.accountAuthorities = accountAuthorities;
+        accountAuthorities.forEach(accountAuthority -> accountAuthority.setAccount(this));
+    }
 }
