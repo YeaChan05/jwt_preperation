@@ -5,19 +5,19 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.yechan.jwt.account.dto.AccountInformationResponse;
-import org.yechan.jwt.account.dto.SignupRequest;
-import org.yechan.jwt.account.dto.SignupResponse;
-import org.yechan.jwt.account.entity.Account;
-import org.yechan.jwt.account.entity.AccountAuthority;
-import org.yechan.jwt.account.entity.Authority;
-import org.yechan.jwt.account.entity.RoleType;
+import org.yechan.jwt.account.domain.RoleType;
+import org.yechan.jwt.account.domain.entity.Account;
+import org.yechan.jwt.account.domain.entity.AccountAuthority;
+import org.yechan.jwt.account.domain.entity.Authority;
+import org.yechan.jwt.account.dto.AccountDetails;
+import org.yechan.jwt.account.dto.request.SignupRequest;
+import org.yechan.jwt.account.dto.response.AccountInformationResponse;
+import org.yechan.jwt.account.dto.response.SignupResponse;
 import org.yechan.jwt.account.repository.AccountRepository;
 import org.yechan.jwt.account.repository.AuthorityRepository;
 
-import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
-
 @Service
 @RequiredArgsConstructor
 public class AccountService {
@@ -32,12 +32,10 @@ public class AccountService {
         }
         Authority user = authorityRepository.findByRoleType(RoleType.USER).orElseThrow();
         
-        // 유저 정보를 만들어서 save
         Account account = Account.builder()
                 .username(signupRequest.getUsername())
                 .password(passwordEncoder.encode(signupRequest.getPassword()))
                 .phone(signupRequest.getPhone())
-                .accountAuthorities(new HashSet<>())
                 .activated(true)
                 .build();
         
@@ -45,8 +43,10 @@ public class AccountService {
                 .authority(user)
                 .account(account)
                 .build();
-        account.getAccountAuthorities().add(accountAuthority);
-        Account savedAccount = accountRepository.saveAndFlush(account);
+        
+        account.addAccountAuthorities(Set.of(accountAuthority));
+        
+        Account savedAccount = accountRepository.save(account);
         
         return SignupResponse.builder()
                 .username(savedAccount.getUsername())
@@ -54,8 +54,8 @@ public class AccountService {
                         .map(AccountAuthority::getAuthority)
                         .map(Authority::getAuthority)
                         .collect(Collectors.toSet()))
-                .createdDate(account.getCreatedDate())
-                .modifiedDate(account.getModifiedDate())
+                .createdDate(savedAccount.getCreatedDate())
+                .modifiedDate(savedAccount.getModifiedDate())
                 .build();
     }
     
