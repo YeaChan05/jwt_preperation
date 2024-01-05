@@ -1,5 +1,7 @@
 package org.yechan.jwt.account.api;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,18 +16,26 @@ import org.yechan.jwt.account.service.AuthService;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+@Tag(name = "Auth", description = "회원 인증 및 인가를 다루는 서비스 api docs")
 public class AuthController {
     private final AuthService authService;
     
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginFormRequest loginFormRequest) {
+    @Operation(summary = "로그인",description = "아이디와 비밀번호로 로그인 요청")
+    public ResponseEntity<?> login(
+            @Valid
+            @RequestBody
+            LoginFormRequest loginFormRequest) {
         AuthenticationResponse authenticationResponse = authService.login(loginFormRequest);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(authenticationResponse);
     }
     
     @GetMapping("/logout")
-    public ResponseEntity<?> logout(@RequestHeader("refreshToken") String refreshToken) {
+    @Operation(summary = "로그아웃",description = "로그아웃 및 클라이언트단 토큰 소멸")
+    public ResponseEntity<?> logout(
+            @RequestHeader("refreshToken")
+            String refreshToken) {
         try {
             authService.logout(refreshToken);
             return ResponseEntity.ok().build();
@@ -35,7 +45,10 @@ public class AuthController {
     }
     
     @PostMapping("/refresh")
-    public ResponseEntity<?> refresh(@RequestBody String refreshToken) {
+    @Operation(summary = "토큰 재발급",description = "refresh token을 전달하여 access token을 재발급")
+    public ResponseEntity<?> refresh(
+            @RequestBody
+            String refreshToken) {
         try {
             String newAccessToken = authService.refresh(refreshToken);
             return ResponseEntity.status(HttpStatus.OK)

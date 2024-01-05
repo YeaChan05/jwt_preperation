@@ -37,6 +37,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorization -> authorization
                         .requestMatchers("/account/signup","/favicon.ico","/auth/login","/auth/refresh").permitAll()
                         .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers("/api-docs/**", "/swagger*/**").permitAll()
                         .anyRequest().authenticated())
                 .headers(header->header
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
