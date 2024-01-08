@@ -17,7 +17,7 @@ public class SwaggerConfig {
                 .version("v0.0.1")
                 .description("인증 인가 프로젝트의 API 명세서입니다.");
         String jwtSchemeName = "jwtAuth";
-        SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwtSchemeName);
+//        SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwtSchemeName);
         Components components = new Components()
                 .addSecuritySchemes(jwtSchemeName, new SecurityScheme()
                         .name(jwtSchemeName)
