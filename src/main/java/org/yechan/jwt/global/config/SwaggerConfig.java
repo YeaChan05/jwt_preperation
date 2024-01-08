@@ -16,9 +16,7 @@ public class SwaggerConfig {
                 .title("auth service API Document")
                 .version("v0.0.1")
                 .description("인증 인가 프로젝트의 API 명세서입니다.");
-        // SecuritySecheme명
         String jwtSchemeName = "jwtAuth";
-        // API 요청헤더에 인증정보 포함
         SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwtSchemeName);
         Components components = new Components()
                 .addSecuritySchemes(jwtSchemeName, new SecurityScheme()
