@@ -31,10 +31,10 @@ public class AuthController {
                 .body(authenticationResponse);
     }
     
-    @GetMapping("/logout")
+    @PostMapping("/logout")
     @Operation(summary = "로그아웃",description = "로그아웃 및 클라이언트단 토큰 소멸")
     public ResponseEntity<?> logout(
-            @RequestHeader("refreshToken")
+            @RequestBody
             String refreshToken) {
         try {
             authService.logout(refreshToken);
