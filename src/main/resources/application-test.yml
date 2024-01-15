@@ -18,14 +18,25 @@ spring:
       host: localhost
       port: 6379
 
+#springdoc:
+#  swagger-ui:
+#    tags-sorter: alpha
+#    operations-sorter: alpha
+#    disable-swagger-default-url: true
+#    display-request-duration: true
+#  api-docs:
+#    path: /api-docs/json
+#  cache:
+#    disabled: true
+#  packages-to-scan: org.yechan.jwt
+
 springdoc:
-  swagger-ui:
-    tags-sorter: alpha
-    operations-sorter: alpha
-    disable-swagger-default-url: true
-    display-request-duration: true
   api-docs:
-    path: /api-docs/json
-  cache:
-    disabled: true
+    path: /api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    try-it-out-enabled: false
   packages-to-scan: org.yechan.jwt
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
