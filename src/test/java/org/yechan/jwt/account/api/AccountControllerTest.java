@@ -1,84 +1,82 @@
 package org.yechan.jwt.account.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
+import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.yechan.jwt.account.common.TokenProvider;
-import org.yechan.jwt.account.domain.entity.Account;
+import org.yechan.jwt.account.common.JwtFilter;
 import org.yechan.jwt.account.dto.request.SignupRequest;
 import org.yechan.jwt.account.dto.response.SignupResponse;
 import org.yechan.jwt.account.service.AccountService;
 import org.yechan.jwt.global.config.SecurityConfig;
 
+import java.time.LocalDateTime;
+import java.util.Set;
+
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.log;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+
 @ActiveProfiles("test")
-@SpringBootTest
-@AutoConfigureMockMvc
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class})
+@WebMvcTest(controllers=AccountController.class)
+@MockBean(JpaMetamodelMappingContext.class)
+@AutoConfigureMockMvc(addFilters = false)
 class AccountControllerTest {
     @Autowired
     MockMvc mockMvc;
-    
-    ObjectMapper objectMapper=new ObjectMapper();
     
     @MockBean
     AccountService accountService;
     
     @MockBean
-    TokenProvider tokenProvider;
-    
-    @BeforeEach
-    void setUp() {
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-    }
+    JwtFilter jwtFilter;
     
     @Test
+    @DisplayName("회원 생성 - 201")
     void signup() throws Exception {
         SignupRequest signupRequest = SignupRequest.builder()
-                .phone("010-8744-5809")
                 .username("test")
-                .password("qwe123").build();
-        
-        Account expectedAccount = Account.builder()
-                .username("test")
-                .password("qwe123")
-                .phone("010-8744-5809")
+                .password("qwe")
+                .phone("000-0000-0000")
                 .build();
+        
+        LocalDateTime now = LocalDateTime.now();
         SignupResponse signupResponse = SignupResponse.builder()
-                .username(expectedAccount.getUsername())
-                .createdDate(expectedAccount.getCreatedDate())
-                .modifiedDate(expectedAccount.getModifiedDate())
+                .authorities(Set.of("USER"))
+                .username("test")
+                .createdDate(now)
+                .modifiedDate(now)
                 .build();
-        given(accountService.signup(any(SignupRequest.class))).willReturn(SignupResponse.builder()
-                        .username(expectedAccount.getUsername())
-                        .createdDate(expectedAccount.getCreatedDate())
-                        .modifiedDate(expectedAccount.getModifiedDate())
-                .build());
         
-        String reqBody = objectMapper.writeValueAsString(signupRequest);
+        when(accountService.signup(any())).thenReturn(signupResponse);
         
-        mockMvc.perform(post("/account/signup")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(reqBody))
-                .andExpect(status().isOk())
-                .andExpect(content().json(objectMapper.writeValueAsString(signupResponse)))
-                .andDo(log());
+        ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+        String req = objectMapper.writeValueAsString(signupRequest);
+        
+        mockMvc.perform(
+                        post("/account/signup")
+                                .content(req)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaTypes.HAL_JSON)
+                )
+                .andDo(log())
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$._links.self").exists());
+        
     }
 }

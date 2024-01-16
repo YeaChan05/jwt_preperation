@@ -4,6 +4,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,6 +17,9 @@ import org.yechan.jwt.account.dto.response.AccountInformationResponse;
 import org.yechan.jwt.account.dto.response.SignupResponse;
 import org.yechan.jwt.account.service.AccountService;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -22,19 +28,22 @@ import org.yechan.jwt.account.service.AccountService;
 public class AccountController {
     private final AccountService accountService;
     
-    @PostMapping("/signup")
+    @PostMapping(value = "/signup",produces = MediaTypes.HAL_JSON_VALUE)
     @Operation(
             summary = "회원가입",
             description = "회원 가입을 위한 form 요청입니다."
     )
-    public ResponseEntity<SignupResponse> signup(
+    public ResponseEntity<EntityModel<SignupResponse>> signup(
             @Validated
             @RequestBody
             SignupRequest signupRequest
     ) {
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(accountService.signup(signupRequest));
+        SignupResponse signup = accountService.signup(signupRequest);
+        Link link = linkTo(methodOn(AccountController.class).signup(signupRequest))
+                .withSelfRel();
+        
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(EntityModel.of(signup,link));
     }
     
     @GetMapping("/info")
